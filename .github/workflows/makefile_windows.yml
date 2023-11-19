@@ -1,0 +1,28 @@
+name: Windows Makefile
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v3
+
+    - name: Run makefile
+      run: |
+        ./makefile.cmd
+
+    - name: Short test
+      run: |
+        java -jar JavaCrypt.jar
+        java -jar JavaCrypt.jar -genkeys
+
+    - name: Clean Up
+      run: |
+        del  *.key
+        git clean -fX
