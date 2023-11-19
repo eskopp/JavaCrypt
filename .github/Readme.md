@@ -102,8 +102,7 @@ Number of bytes transferred: 128
 End of the program.
 
 ➜  JavaCrypt git:(main) ✗  cat test_encrypt.txt
-"^X/�L��[^EaD���^?�(�@^]��^_�-��WV�>^A�ǚ�M^_i�[��4�w�^P���e���^Tћ
-96�����^X����  �C'�/^Z^X���������=�G��oe`.�^Xۙ�f�D�W����d|Cb ^]w���^Zy��f"
+...
 
 
 ➜  JavaCrypt git:(main) ✗ java -jar JavaCrypt.jar -decrypt priv.key test_encrypt.txt test_decrypt.txt
