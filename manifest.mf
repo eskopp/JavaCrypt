@@ -1,0 +1,5 @@
+Manifest-Version: 1.0
+Main-Class: javacrypt.MyCryptMain
+Built-By: Erik Skopp
+Created-By: Erik Skopp
+Implementation-Version: 1.0.4

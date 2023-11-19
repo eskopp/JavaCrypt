@@ -1,0 +1,33 @@
+name: Linux Makefile
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v3
+
+    - name: Dos2Unix
+      run: |
+        sudo apt-get install dos2unix -y
+        sudo dos2unix makefile.sh
+    
+    - name: run makefile
+      run: |
+        sudo sh makefile.sh
+
+    - name: Short test
+      run: |
+        java -jar JavaCrypt.jar 
+        java -jar JavaCrypt.jar -genkeys
+    
+    - name: Clean Up
+      run: |
+        rm -rf *.key
+        git clean -fX

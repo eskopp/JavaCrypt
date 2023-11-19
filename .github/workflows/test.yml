@@ -1,0 +1,73 @@
+name: JavaCrypt Test
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        java: [8, 11, 16, 17, 18, 20]
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v3
+
+    - name: Set up JDK
+      uses: actions/setup-java@v3
+      with:
+        distribution: 'adopt'
+        java-version: ${{ matrix.java }}
+
+    
+    - name: Compiling the Java code
+      run: javac -Xlint:unchecked ./javacrypt/*.java
+
+    - name: Creating the JAR archive 
+      run: jar cfm JavaCrypt.jar manifest.mf javacrypt/*.class
+    
+    - name: Start Tool 
+      run: java -jar JavaCrypt.jar
+
+    - name: Generate Keys
+      run: java -jar JavaCrypt.jar -genkeys priv.key pub.key
+
+    - name: create Test (clear) File
+      run: |
+        crypt_file="weather_report.txt"
+        if [ ! -e "$crypt_file" ]; then
+            echo "Dear readers, today's weather is best described as a blend of unpleasant dampness and ominous clouds." > "$crypt_file"
+        else
+            exit 1
+        fi
+          touch encrypt.txt
+          touch decrypt.txt
+
+    - name: encrypt file
+      run: java -jar JavaCrypt.jar -encrypt pub.key weather_report.txt encrypt.txt
+
+    - name: decrypt file
+      run: java -jar JavaCrypt.jar -decrypt priv.key encrypt.txt decrypt.txt
+
+    - name: compare files
+      run: |
+        datei1="decrypt.txt"
+        datei2="weather_report.txt"
+        cat $datei1
+        cat $datei2
+       
+        if [ -e "$datei1" ] && [ -e "$datei2" ]; then
+         if ! cmp -s "$datei1" "$datei2"; then
+                exit 1
+            fi
+        fi
+
+    - name: Clean Up
+      run: |
+        rm -rf *.key
+        rm -rf *.txt
+        git clean -fX
