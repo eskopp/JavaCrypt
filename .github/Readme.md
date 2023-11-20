@@ -32,7 +32,7 @@ javac -Xlint:unchecked ./javacrypt/*.java
 
 
 #### Build  JAR-File
-The command ``jar cfm MyCrypt.jar ./makefile.txt javacrypt/*.class`` creates a JAR (Java Archive) file named ``MyCrypt.jar`` with the specified manifest file (``makefile.txt``) and includes all the class files (``*.class``) in the ``javacrypt`` directory.
+The command ``jar cfm MyCrypt.jar ./manifest.mf javacrypt/*.class`` creates a JAR (Java Archive) file named ``MyCrypt.jar`` with the specified manifest file (``manifest.mf``) and includes all the class files (``*.class``) in the ``javacrypt`` directory.
 
 ```shell
  jar cfm JavaCrypt.jar manifest.mf javacrypt/*.class
