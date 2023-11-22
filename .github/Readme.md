@@ -15,6 +15,7 @@ The commands for Java are platform independent. Therefore, it doesn't matter if 
 - Linux
 ```bash
 dos2unix makefile.sh
+chmod +x makefile.sh
 sudo sh makefile.sh
 ```
 - Windows
