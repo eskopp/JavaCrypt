@@ -12,6 +12,11 @@ sudo apt install -y coreutils default-jre default-jdk dos2unix
 The commands for Java are platform independent. Therefore, it doesn't matter if you run it on Linux or Windows.
 
 ### Makefile
+- If you have installed Java, you can build the project directly with ``make``. 
+```bash
+make
+```
+
 - Linux
 ```bash
 dos2unix makefile.sh
