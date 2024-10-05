@@ -1,4 +1,4 @@
-.PHONY: all clean permissions
+.PHONY: all clean test permissions clean_test
 
 # Define the target executable
 TARGET = JavaCrypt.jar
@@ -10,7 +10,7 @@ SRC_DIR = javacrypt
 SRC_FILES = $(wildcard $(SRC_DIR)/*.java)
 
 # Define the compiler and flags
-JAVAC = /usr/bin/javac
+JAVAC = javac
 JAR = jar
 JAVAC_FLAGS = -Xlint:unchecked
 
@@ -34,3 +34,22 @@ clean:
 permissions:
 	@echo "Setting execution permissions for the JAR archive..."
 	@chmod +x $(TARGET)
+
+# Test rule to compile and run a simple Java file
+test: $(SRC_DIR)/TestJava.class
+	@echo "Compiling TestJava.java..."
+	@$(JAVAC) $(SRC_DIR)/TestJava.java
+	@echo "Running Java test..."
+	@java javacrypt.TestJava
+	@$(MAKE) clean_test
+
+# Rule to compile the test Java file
+$(SRC_DIR)/TestJava.class: $(SRC_DIR)/TestJava.java
+	@echo "Compiling TestJava.java..."
+	@$(JAVAC) $(SRC_DIR)/TestJava.java
+
+# Rule to clean up only the TestJava class files after test
+clean_test:
+	@echo "Cleaning up test class files..."
+	@rm -f $(SRC_DIR)/TestJava.class
+	@echo "Test cleanup done!"
