@@ -1,0 +1,60 @@
+name: Attach build artifacts to release
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+  release:
+    types: [published]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        java: [11, 17, 21, 25]
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v7
+
+      - name: Set up JDK
+        uses: actions/setup-java@v5
+        with:
+          distribution: 'temurin'
+          java-version: ${{ matrix.java }}
+          cache: 'maven'
+
+      - name: Build with Maven
+        run: ./mvnw -B package
+
+      - name: Rename JAR
+        run: cp target/JavaCrypt.jar JavaCrypt-jdk${{ matrix.java }}.jar
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: JavaCrypt-jdk${{ matrix.java }}
+          path: JavaCrypt-jdk${{ matrix.java }}.jar
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download all JARs
+        uses: actions/download-artifact@v4
+        with:
+          path: jars
+          merge-multiple: true
+
+      - name: Attach JARs to release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          tag="${GITHUB_REF_NAME}"
+          gh release view "$tag" --repo "${{ github.repository }}" >/dev/null 2>&1 \
+            || gh release create "$tag" --repo "${{ github.repository }}" --generate-notes
+          gh release upload "$tag" jars/*.jar --repo "${{ github.repository }}" --clobber
