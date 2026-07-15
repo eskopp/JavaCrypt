@@ -17,11 +17,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-        java: [8, 11, 17, 21, 25]
-        exclude:
-          # Temurin ships no JDK 8 build for macOS on Apple Silicon (macos-latest runners)
-          - os: macos-latest
-            java: 8
+        java: [11, 17, 21, 25]
 
     steps:
     - name: Checkout Repository
