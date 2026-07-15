@@ -3,7 +3,7 @@
  * Package: javacrypt
  * Author: Erik Skopp
  * Created: 10.06.2018
- * Modified: 18.11.2023
+ * Modified: 16.07.2026
  * Version: 1.0.4
  */
 
