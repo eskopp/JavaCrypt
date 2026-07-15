@@ -1,0 +1,88 @@
+name: Mirror to GitLab
+
+on:
+  push:
+    branches:
+      - "**"
+    tags:
+      - "**"
+  release:
+    types: [published, edited, deleted]
+  workflow_dispatch:
+
+jobs:
+  mirror-git:
+    name: Mirror branches, tags, history and signatures
+    runs-on: ubuntu-latest
+    steps:
+      - name: Bare-mirror clone the source repo
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          git clone --mirror "https://x-access-token:${GH_TOKEN}@github.com/eskopp/JavaCrypt.git" source.git
+
+      - name: Push mirror to GitLab
+        env:
+          GITLAB_PAT: ${{ secrets.GITLAB_PAT }}
+        run: |
+          set -euo pipefail
+          cd source.git
+          # A bare --mirror clone only holds refs/heads/* and refs/tags/*, so
+          # `push --mirror` from here is safe - no refs/remotes/* pollution like
+          # there would be from actions/checkout. GPG commit/tag signatures are
+          # part of the git objects themselves and travel along automatically.
+          git push --mirror "https://oauth2:${GITLAB_PAT}@gitlab.erik-skopp.de/ags-erfurt/JavaCrypt.git"
+
+  mirror-releases:
+    name: Mirror GitHub Releases to GitLab Releases
+    runs-on: ubuntu-latest
+    needs: mirror-git
+    steps:
+      - name: Sync releases via API
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GITLAB_PAT: ${{ secrets.GITLAB_PAT }}
+          GITLAB_PROJECT: ags-erfurt%2FJavaCrypt
+        run: |
+          set -euo pipefail
+
+          releases=$(curl -s -H "Authorization: token $GH_TOKEN" \
+            "https://api.github.com/repos/eskopp/JavaCrypt/releases?per_page=100")
+
+          echo "$releases" | jq -c '.[]' | while read -r release; do
+            tag=$(echo "$release" | jq -r '.tag_name')
+            name=$(echo "$release" | jq -r '.name // .tag_name')
+            body=$(echo "$release" | jq -r '.body // ""')
+
+            exists=$(curl -s -o /dev/null -w "%{http_code}" \
+              -H "PRIVATE-TOKEN: $GITLAB_PAT" \
+              "https://gitlab.erik-skopp.de/api/v4/projects/$GITLAB_PROJECT/releases/$tag")
+
+            payload=$(jq -n --arg tag "$tag" --arg name "$name" --arg desc "$body" \
+              '{tag_name: $tag, name: $name, description: $desc}')
+
+            if [ "$exists" = "200" ]; then
+              echo "Updating GitLab release for $tag"
+              curl -s -X PUT -H "PRIVATE-TOKEN: $GITLAB_PAT" -H "Content-Type: application/json" \
+                -d "$payload" \
+                "https://gitlab.erik-skopp.de/api/v4/projects/$GITLAB_PROJECT/releases/$tag" > /dev/null
+            else
+              echo "Creating GitLab release for $tag"
+              curl -s -X POST -H "PRIVATE-TOKEN: $GITLAB_PAT" -H "Content-Type: application/json" \
+                -d "$payload" \
+                "https://gitlab.erik-skopp.de/api/v4/projects/$GITLAB_PROJECT/releases" > /dev/null
+            fi
+
+            # Link release assets instead of re-uploading them (points back at the
+            # original GitHub asset URLs).
+            echo "$release" | jq -c '.assets[]?' | while read -r asset; do
+              asset_name=$(echo "$asset" | jq -r '.name')
+              asset_url=$(echo "$asset" | jq -r '.browser_download_url')
+              link_payload=$(jq -n --arg name "$asset_name" --arg url "$asset_url" \
+                '{name: $name, url: $url}')
+              curl -s -X POST -H "PRIVATE-TOKEN: $GITLAB_PAT" -H "Content-Type: application/json" \
+                -d "$link_payload" \
+                "https://gitlab.erik-skopp.de/api/v4/projects/$GITLAB_PROJECT/releases/$tag/assets/links" > /dev/null
+            done
+          done
