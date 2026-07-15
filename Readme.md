@@ -55,42 +55,25 @@ A simple file copy, without encryption.
 java -jar target/JavaCrypt.jar -copy text.txt text_copy.txt
 ```
 
-## Usage
+## Full Example
+An end-to-end walkthrough, from a fresh clone to a verified encrypt/decrypt roundtrip:
+
 ```bash
-➜  JavaCrypt git:(main) ✗ ./mvnw package
+./mvnw package
 
-➜  JavaCrypt git:(main) ✗ java -jar target/JavaCrypt.jar
-Program 'JavaCrypt'
-Usage:
-        JavaCrypt -genkeys [priv_keyfile] [pub_keyfile]
-        JavaCrypt -encrypt [pub_keyfile] [ifile] [ofile]
-        JavaCrypt -decrypt [privkeyfile] [ifile] [ofile]
-        JavaCrypt -copy [ifile] [ofile]
+java -jar target/JavaCrypt.jar -genkeys priv.key pub.key
+# Private key file: priv.key
+# Public key file:  pub.key
 
+echo "Hello World" > test.txt
 
-➜  JavaCrypt git:(main) ✗ java -jar target/JavaCrypt.jar -genkeys priv.key pub.key
-RunGenKeys
-Private key file: /mnt/e/git_eskopp/JavaCrypt/priv.key
-Public key file: /mnt/e/git_eskopp/JavaCrypt/pub.key
-End of the program.
+java -jar target/JavaCrypt.jar -encrypt pub.key test.txt test_encrypt.txt
+# Number of bytes transferred: 128
 
-➜  JavaCrypt git:(main) ✗ echo "Hello World" > test.txt
+java -jar target/JavaCrypt.jar -decrypt priv.key test_encrypt.txt test_decrypt.txt
+# Number of bytes transferred: 128
 
-➜  JavaCrypt git:(main) ✗ java -jar target/JavaCrypt.jar -encrypt pub.key test.txt test_encrypt.txt
-RunEncrypt
-Number of bytes transferred: 128
-End of the program.
-
-➜  JavaCrypt git:(main) ✗  cat test_encrypt.txt
-...
-
-
-➜  JavaCrypt git:(main) ✗ java -jar target/JavaCrypt.jar -decrypt priv.key test_encrypt.txt test_decrypt.txt
-RunDecrypt
-Number of bytes transferred: 128
-End of the program.
-
-➜  JavaCrypt git:(main) ✗ cat test_decrypt.txt
-Hello World
+cat test_decrypt.txt
+# Hello World
 ```
 
