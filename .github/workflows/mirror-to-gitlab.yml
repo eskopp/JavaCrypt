@@ -8,12 +8,18 @@ on:
       - "**"
   release:
     types: [published, edited, deleted]
+  workflow_run:
+    # GITHUB_TOKEN-created releases (like the one release-assets.yml makes) don't
+    # trigger the "release" event above, so catch up here once that run finishes.
+    workflows: ["Attach build artifacts to release"]
+    types: [completed]
   workflow_dispatch:
 
 jobs:
   mirror-git:
     name: Mirror branches, tags, history and signatures
     runs-on: ubuntu-latest
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
     steps:
       - name: Bare-mirror clone the source repo
         env:
