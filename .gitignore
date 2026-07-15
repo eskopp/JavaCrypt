@@ -3,6 +3,9 @@
 *.txt
 *.jar
 
+# Maven
+target/
+
 # Intellij
 .idea/ 
 idea 

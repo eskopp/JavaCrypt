@@ -11,7 +11,7 @@ jobs:
 
     strategy:
       matrix:
-        java: [8, 11, 16, 17, 18, 20]
+        java: [11, 17, 21]
 
     steps:
     - name: Checkout Repository
@@ -20,21 +20,18 @@ jobs:
     - name: Set up JDK
       uses: actions/setup-java@v5
       with:
-        distribution: 'adopt'
+        distribution: 'temurin'
         java-version: ${{ matrix.java }}
+        cache: 'maven'
 
-    
-    - name: Compiling the Java code
-      run: javac -Xlint:unchecked ./javacrypt/*.java
+    - name: Build with Maven
+      run: ./mvnw -B package
 
-    - name: Creating the JAR archive 
-      run: jar cfm JavaCrypt.jar manifest.mf javacrypt/*.class
-    
-    - name: Start Tool 
-      run: java -jar JavaCrypt.jar
+    - name: Start Tool
+      run: java -jar target/JavaCrypt.jar
 
     - name: Generate Keys
-      run: java -jar JavaCrypt.jar -genkeys priv.key pub.key
+      run: java -jar target/JavaCrypt.jar -genkeys priv.key pub.key
 
     - name: create Test (clear) File
       run: |
@@ -48,10 +45,10 @@ jobs:
           touch decrypt.txt
 
     - name: encrypt file
-      run: java -jar JavaCrypt.jar -encrypt pub.key weather_report.txt encrypt.txt
+      run: java -jar target/JavaCrypt.jar -encrypt pub.key weather_report.txt encrypt.txt
 
     - name: decrypt file
-      run: java -jar JavaCrypt.jar -decrypt priv.key encrypt.txt decrypt.txt
+      run: java -jar target/JavaCrypt.jar -decrypt priv.key encrypt.txt decrypt.txt
 
     - name: compare files
       run: |
@@ -59,7 +56,7 @@ jobs:
         datei2="weather_report.txt"
         cat $datei1
         cat $datei2
-       
+
         if [ -e "$datei1" ] && [ -e "$datei2" ]; then
          if ! cmp -s "$datei1" "$datei2"; then
                 exit 1
