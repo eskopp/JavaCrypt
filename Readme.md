@@ -2,7 +2,7 @@
 
 
 ## Install Java
-The only thing you need to install yourself is a JDK (11 or newer).
+The only thing you need to install yourself is a JDK (8 or newer).
 
 - **Debian**: `sudo apt update && sudo apt install default-jdk`
 - **Arch**: `sudo pacman -S jdk-openjdk`
