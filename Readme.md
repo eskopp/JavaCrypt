@@ -1,7 +1,9 @@
-# Java Crypt
+# JavaCrypt
 
+A small command-line tool for RSA file encryption, decryption, key generation, and plain file copying.
 
 ## Install Java
+
 The only thing you need to install yourself is a JDK (11 or newer).
 
 - **Debian**: `sudo apt update && sudo apt install default-jdk`
@@ -9,7 +11,8 @@ The only thing you need to install yourself is a JDK (11 or newer).
 - **Mac** (Homebrew): `brew install openjdk`
 - **Windows** (winget): `winget install EclipseAdoptium.Temurin.21.JDK`
 
-## Build Project
+## Build
+
 This project uses [Maven](https://maven.apache.org/) together with the Maven Wrapper, so you don't need
 to install Maven yourself - the wrapper downloads it for you on first run.
 
@@ -20,42 +23,50 @@ mvnw.cmd package    # Windows
 
 This produces `target/JavaCrypt.jar`.
 
-## Run JavaCrypt
+## Usage
 
-### Start Programm
-```shell
-java -jar target/JavaCrypt.jar
+```
+java -jar target/JavaCrypt.jar -genkeys [priv_keyfile] [pub_keyfile]
+java -jar target/JavaCrypt.jar -encrypt [pub_keyfile] [ifile] [ofile]
+java -jar target/JavaCrypt.jar -decrypt [priv_keyfile] [ifile] [ofile]
+java -jar target/JavaCrypt.jar -copy [ifile] [ofile]
 ```
 
-### Generate Keys 
-Before you can use the encryption, you need to generate it with keys. The keys are stored in binary form. Therefore, they cannot be opened with a normal editor. The public key is needed for encryption and the private key for decryption. 
+### Generate Keys
+
+Generates an RSA key pair and writes it to the given files, in Java's own serialized object format
+(not a standard PEM/DER format, so it's only readable by JavaCrypt itself).
 
 ```shell
-java -jar target/JavaCrypt.jar -genkeys <PUBLIC-KEY> <PRIVATE-KEY>
+java -jar target/JavaCrypt.jar -genkeys priv.key pub.key
 ```
 
-### Encrypt Files 
-For the encryption you need three files. A public key, the file to be encrypted and the output file. With the flag "-encrypt" and the correct specification of the files the file will be encrypted.
+### Encrypt a File
+
+Encrypts a file using a public key.
+
 ```shell
-java -jar target/JavaCrypt.jar -encrypt <PUBLIC-KEY> <FILE> <ENCRYPTED-FILE>
+java -jar target/JavaCrypt.jar -encrypt pub.key file.txt file.enc
 ```
 
+### Decrypt a File
 
-### Decrypt Files 
-For decryption, you need three files. A private key, the file to be decrypted and the output file. By the flag "-decrypt" and the correct specification of the files the file is decrypted. 
+Decrypts a file using the matching private key.
+
 ```shell
-java -jar target/JavaCrypt.jar -decrypt <PRIVATE-KEY>  <ENCRYPTED-FILE> <DECRYPT-FILE> 
+java -jar target/JavaCrypt.jar -decrypt priv.key file.enc file.dec
 ```
 
+### Copy a File
 
-### Copy Files
-A simple file copy, without encryption.
+A plain file copy, without any encryption.
 
 ```shell
-java -jar target/JavaCrypt.jar -copy text.txt text_copy.txt
+java -jar target/JavaCrypt.jar -copy file.txt file_copy.txt
 ```
 
 ## Full Example
+
 An end-to-end walkthrough, from a fresh clone to a verified encrypt/decrypt roundtrip:
 
 ```bash
@@ -77,3 +88,6 @@ cat test_decrypt.txt
 # Hello World
 ```
 
+## License
+
+[GPLv3](LICENSE)
