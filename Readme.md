@@ -108,8 +108,3 @@ End of the program.
 Hello World
 ```
 
-
-## Program architecture
-Here is the UML plan of the project. 
-<img src="./img/UML.png" alt="Java UML">
-
