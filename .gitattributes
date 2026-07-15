@@ -1,6 +1,10 @@
 # Force LF line endings for normal text files
 * text=auto eol=lf
 
+# Windows batch scripts need CRLF
+*.cmd text eol=crlf
+*.bat text eol=crlf
+
 # Binary files: leave untouched, no EOL conversion, no diff
 *.png binary
 *.jpg binary
