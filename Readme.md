@@ -49,10 +49,10 @@ java -jar target/JavaCrypt.jar -decrypt <PRIVATE-KEY>  <ENCRYPTED-FILE> <DECRYPT
 
 
 ### Copy Files
-The copying of files is a function that has arisen more through the others. For this reason one must also specify a "dummy word". But it doesn't matter which string you enter, because it will be ignored. 
+A simple file copy, without encryption.
 
 ```shell
-java -jar target/JavaCrypt.jar -copy dummy text.txt text_copy.txt
+java -jar target/JavaCrypt.jar -copy text.txt text_copy.txt
 ```
 
 ## Usage
@@ -65,7 +65,7 @@ Usage:
         JavaCrypt -genkeys [priv_keyfile] [pub_keyfile]
         JavaCrypt -encrypt [pub_keyfile] [ifile] [ofile]
         JavaCrypt -decrypt [privkeyfile] [ifile] [ofile]
-        JavaCrypt -copy [dummyword] [ifile]  [ofile]
+        JavaCrypt -copy [ifile] [ofile]
 
 
 ➜  JavaCrypt git:(main) ✗ java -jar target/JavaCrypt.jar -genkeys priv.key pub.key

@@ -21,7 +21,7 @@ import java.util.List;
  * -genkeys [priv_keyfile] [pub_keyfile]: Generates a key pair and stores it in the specified files.
  * -encrypt [pub_keyfile] [ifile] [ofile]: Encrypts the input file using the public key and saves the result to the output file.
  * -decrypt [privkeyfile] [ifile] [ofile]: Decrypts the input file using the private key and saves the result to the output file.
- * -copy [dummyword] [ifile] [ofile]: Copies the input file to the output file (without encryption).
+ * -copy [ifile] [ofile]: Copies the input file to the output file (without encryption).
  */
 public class MyCryptMain {
 
@@ -45,7 +45,7 @@ public class MyCryptMain {
             "\t" + PROG_NAME + " " + MY_ARRAY.get(0)[0] + " [priv_keyfile] [pub_keyfile]",
             "\t" + PROG_NAME + " " + MY_ARRAY.get(1)[0] + " [pub_keyfile] [ifile] [ofile] ",
             "\t" + PROG_NAME + " " + MY_ARRAY.get(2)[0] + " [privkeyfile] [ifile] [ofile] ",
-            "\t" + PROG_NAME + " " + MY_ARRAY.get(3)[0] + " [dummyword] [ifile]  [ofile] ",
+            "\t" + PROG_NAME + " " + MY_ARRAY.get(3)[0] + " [ifile] [ofile] ",
             ""
         };
 

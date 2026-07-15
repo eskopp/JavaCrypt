@@ -11,6 +11,7 @@ package javacrypt;
 
 import java.io.*;
 import java.security.*;
+import java.util.Arrays;
 import javax.crypto.Cipher;
 
 /**
@@ -89,7 +90,8 @@ public abstract class RunnableBase implements RunnableInterface {
             int bufl;
 
             while ((bufl = inputReader.read(buf)) != -1) {
-                byte[] encText = crypt(buf, key, cipher);
+                byte[] chunk = (bufl == buf.length) ? buf : Arrays.copyOf(buf, bufl);
+                byte[] encText = crypt(chunk, key, cipher);
                 outputWriter.write(encText);
                 size += bufl;
             }
