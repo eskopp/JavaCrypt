@@ -2,30 +2,18 @@
 
 
 ## Install Java
-The first thing to do is to install java. This works differently with each operating system.
+The first thing to do is to install java.
 ```shell
 sudo apt update && sudo apt upgrade -y
-sudo apt install -y coreutils default-jre default-jdk dos2unix
+sudo apt install -y coreutils default-jre default-jdk
 ```
 
 ## Build Project
-The commands for Java are platform independent. Therefore, it doesn't matter if you run it on Linux or Windows.
 
 ### Makefile
 - If you have installed Java, you can build the project directly with ``make``. 
 ```bash
 make
-```
-
-- Linux
-```bash
-dos2unix makefile.sh
-chmod +x makefile.sh
-sudo sh makefile.sh
-```
-- Windows
-```powershell
-./makefile.cmd
 ```
 
 ### Self Build
