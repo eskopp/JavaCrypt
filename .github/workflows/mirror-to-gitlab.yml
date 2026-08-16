@@ -34,11 +34,12 @@ jobs:
         run: |
           set -euo pipefail
           cd source.git
+          auth_header=$(printf 'Authorization: Basic %s' "$(printf 'oauth2:%s' "$GITLAB_PAT" | base64 -w0)")
           # A bare --mirror clone only holds refs/heads/* and refs/tags/*, so
           # `push --mirror` from here is safe - no refs/remotes/* pollution like
           # there would be from actions/checkout. GPG commit/tag signatures are
           # part of the git objects themselves and travel along automatically.
-          git push --mirror "https://oauth2:${GITLAB_PAT}@gitlab.erik-skopp.de/ags-erfurt/JavaCrypt.git"
+          git -c "http.extraHeader=${auth_header}" push --mirror "https://gitlab.erik-skopp.de/ags-erfurt/JavaCrypt.git"
 
   mirror-releases:
     name: Mirror GitHub Releases to GitLab Releases
