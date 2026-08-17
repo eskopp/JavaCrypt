@@ -48,11 +48,14 @@ jobs:
         run: |
           set -euo pipefail
           cd source.git
-          # A bare --mirror clone only holds refs/heads/* and refs/tags/*, so
-          # `push --mirror` from here is safe - no refs/remotes/* pollution like
-          # there would be from actions/checkout. GPG commit/tag signatures are
-          # part of the git objects themselves and travel along automatically.
-          git push --mirror "https://eskopp:${FORGEJO_TOKEN}@git.erik-skopp.de/eskopp/${FORGEJO_REPO}.git"
+          # A bare --mirror clone of a GitHub repo also picks up refs/pull/*/head
+          # (GitHub advertises those for read), which Forgejo rejects on push as
+          # "deny updating a hidden ref". Push only heads and tags explicitly
+          # (with --prune so deleted branches/tags are removed on Forgejo too).
+          # GPG commit/tag signatures are part of the git objects themselves and
+          # travel along automatically.
+          git push --prune "https://eskopp:${FORGEJO_TOKEN}@git.erik-skopp.de/eskopp/${FORGEJO_REPO}.git" \
+            'refs/heads/*:refs/heads/*' 'refs/tags/*:refs/tags/*'
 
   sync-releases:
     name: Mirror GitHub Releases to Forgejo Releases
