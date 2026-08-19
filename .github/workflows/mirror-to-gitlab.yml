@@ -33,11 +33,12 @@ jobs:
           # LFS objects live outside the normal git objects a bare --mirror
           # clone transfers. GitLab's pre-receive hook validates LFS pointers
           # during `push --mirror` itself, so the objects must already be on
-          # the GitLab side beforehand, not pushed afterwards.
-          if git lfs ls-files -a | grep -q .; then
-            git lfs fetch --all origin
-            git lfs push --all "$GITLAB_REPO_URL"
-          fi
+          # the GitLab side beforehand, not pushed afterwards. `git lfs
+          # ls-files` needs a working tree to detect LFS usage, which a bare
+          # mirror clone doesn't have, so just always fetch+push - it's a
+          # fast no-op on repos with no LFS objects.
+          git lfs fetch --all origin
+          git lfs push --all "$GITLAB_REPO_URL"
 
           # A bare --mirror clone only holds refs/heads/* and refs/tags/*, so
           # `push --mirror` from here is safe - no refs/remotes/* pollution like
