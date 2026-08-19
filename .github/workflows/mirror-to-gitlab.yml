@@ -28,12 +28,21 @@ jobs:
         run: |
           set -euo pipefail
           cd source.git
+          GITLAB_REPO_URL="https://oauth2:${GITLAB_TOKEN}@gitlab.erik-skopp.de/Archive/JavaCrypt.git"
+
           # A bare --mirror clone only holds refs/heads/* and refs/tags/*, so
           # `push --mirror` from here is safe - no refs/remotes/* pollution like
           # there would be from actions/checkout. GPG commit/tag signatures are
           # part of the git objects themselves and travel along automatically.
-          git push --mirror "https://oauth2:${GITLAB_TOKEN}@gitlab.erik-skopp.de/Archive/JavaCrypt.git"
+          git push --mirror "$GITLAB_REPO_URL"
 
+          # LFS objects live outside the normal git objects a bare --mirror
+          # clone transfers, so fetch + push them explicitly or GitLab's
+          # pre-receive hook rejects the push with "LFS objects are missing".
+          if git lfs ls-files -a | grep -q .; then
+            git lfs fetch --all origin
+            git lfs push --all "$GITLAB_REPO_URL"
+          fi
   mirror-releases:
     name: Mirror GitHub Releases to GitLab Releases
     runs-on: ubuntu-latest
