@@ -28,7 +28,7 @@ jobs:
         run: |
           set -euo pipefail
           cd source.git
-          GITLAB_REPO_URL="https://oauth2:${GITLAB_TOKEN}@gitlab.erik-skopp.de/Archive/JavaCrypt.git"
+          GITLAB_REPO_URL="https://oauth2:${GITLAB_TOKEN}@gitlab.erikskopp.de/Archive/JavaCrypt.git"
 
           # LFS objects live outside the normal git objects a bare --mirror
           # clone transfers. GitLab's pre-receive hook validates LFS pointers
@@ -68,7 +68,7 @@ jobs:
 
             exists=$(curl -s -o /dev/null -w "%{http_code}" \
               -H "PRIVATE-TOKEN: $GITLAB_TOKEN" \
-              "https://gitlab.erik-skopp.de/api/v4/projects/$GITLAB_PROJECT/releases/$tag")
+              "https://gitlab.erikskopp.de/api/v4/projects/$GITLAB_PROJECT/releases/$tag")
 
             payload=$(jq -n --arg tag "$tag" --arg name "$name" --arg desc "$body" \
               '{tag_name: $tag, name: $name, description: $desc}')
@@ -77,12 +77,12 @@ jobs:
               echo "Updating GitLab release for $tag"
               curl -s -X PUT -H "PRIVATE-TOKEN: $GITLAB_TOKEN" -H "Content-Type: application/json" \
                 -d "$payload" \
-                "https://gitlab.erik-skopp.de/api/v4/projects/$GITLAB_PROJECT/releases/$tag" > /dev/null
+                "https://gitlab.erikskopp.de/api/v4/projects/$GITLAB_PROJECT/releases/$tag" > /dev/null
             else
               echo "Creating GitLab release for $tag"
               curl -s -X POST -H "PRIVATE-TOKEN: $GITLAB_TOKEN" -H "Content-Type: application/json" \
                 -d "$payload" \
-                "https://gitlab.erik-skopp.de/api/v4/projects/$GITLAB_PROJECT/releases" > /dev/null
+                "https://gitlab.erikskopp.de/api/v4/projects/$GITLAB_PROJECT/releases" > /dev/null
             fi
 
             echo "$release" | jq -c '.assets[]?' | while read -r asset; do
@@ -92,6 +92,6 @@ jobs:
                 '{name: $name, url: $url}')
               curl -s -X POST -H "PRIVATE-TOKEN: $GITLAB_TOKEN" -H "Content-Type: application/json" \
                 -d "$link_payload" \
-                "https://gitlab.erik-skopp.de/api/v4/projects/$GITLAB_PROJECT/releases/$tag/assets/links" > /dev/null
+                "https://gitlab.erikskopp.de/api/v4/projects/$GITLAB_PROJECT/releases/$tag/assets/links" > /dev/null
             done
           done
