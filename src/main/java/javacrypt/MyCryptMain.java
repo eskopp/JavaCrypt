@@ -36,7 +36,7 @@ public class MyCryptMain {
     );
 
     /**
-     * Displays the usage of the program and exits.
+     * Displays the usage of the program.
      */
     private static void usage() {
         String[] msg = {
@@ -51,9 +51,6 @@ public class MyCryptMain {
 
         // Output the strings
         Arrays.stream(msg).forEach(System.err::println);
-
-        // Exit the program with an error code
-        System.exit(0);
     }
 
     /**
@@ -63,23 +60,29 @@ public class MyCryptMain {
      * @throws Exception If an error occurs.
      */
     public static void main(String[] args) throws Exception {
+        int exitCode = execute(args);
+        if (exitCode != 0) {
+            System.exit(exitCode);
+        }
+    }
+
+    /**
+     * Runs the program without terminating the JVM.
+     *
+     * @param args The command-line arguments.
+     * @return The exit code: 0 on success, 1 if the usage was wrong.
+     * @throws Exception If an error occurs.
+     */
+    static int execute(String[] args) throws Exception {
         // Factory instance
         RunnableKeyValueFactory runnableKeyValueFactory = new RunnableKeyValueFactory(MY_ARRAY.toArray(new String[0][]));
 
-        // Get the number of command-line arguments
-        int argSize = args.length;
-
-        if (argSize == 0) {
-            usage(); // Static method
-        }
-
-        // Get the control argument
-        String cmdKey = args[0];
-
-        // Check if the command exists
-        if (!runnableKeyValueFactory.containsKey(cmdKey)) {
+        if (args.length == 0 || !runnableKeyValueFactory.containsKey(args[0])) {
             usage();
+            return 1;
         }
+
+        String cmdKey = args[0];
 
         // Perform the shift operation
         List<String> optArgList = Arrays.asList(args).subList(1, args.length);
@@ -91,5 +94,6 @@ public class MyCryptMain {
         myRun.run(optArgList);
 
         System.out.println("End of the program.");
+        return 0;
     }
 }

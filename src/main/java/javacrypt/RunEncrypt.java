@@ -87,9 +87,7 @@ public class RunEncrypt extends RunnableBase {
             cipher.init(Cipher.ENCRYPT_MODE, pubKey);
             return cipher;
         } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException ex) {
-            System.err.println("Exception: " + ex.getMessage());
-            System.exit(8);
-            return null; // Unreachable code, added to satisfy the compiler
+            throw new IllegalStateException("Cannot create cipher: " + ex.getMessage(), ex);
         }
     }
 
