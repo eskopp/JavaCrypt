@@ -91,3 +91,63 @@ jobs:
         rm -rf *.key
         rm -rf *.txt
         git clean -fX
+
+  coverage-badge:
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v7
+
+    - name: Set up JDK
+      uses: actions/setup-java@v6.0.1
+      with:
+        distribution: 'temurin'
+        java-version: 21
+        cache: 'maven'
+
+    - name: Run tests with coverage
+      run: ./mvnw -B verify
+
+    - name: Create badge file
+      run: |
+        mkdir -p badge
+        python3 - <<'PY'
+        import csv, json
+        rows = list(csv.DictReader(open('target/site/jacoco/jacoco.csv')))
+        covered = sum(int(r['INSTRUCTION_COVERED']) for r in rows)
+        missed = sum(int(r['INSTRUCTION_MISSED']) for r in rows)
+        pct = round(100 * covered / (covered + missed))
+        color = ('brightgreen' if pct >= 90 else 'green' if pct >= 80 else
+                 'yellowgreen' if pct >= 70 else 'yellow' if pct >= 60 else
+                 'orange' if pct >= 50 else 'red')
+        json.dump({'schemaVersion': 1, 'label': 'coverage',
+                   'message': f'{pct}%', 'color': color},
+                  open('badge/coverage.json', 'w'))
+        PY
+        cat badge/coverage.json
+
+    - name: Publish badge to badges branch
+      run: |
+        git config user.name "github-actions[bot]"
+        git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        git fetch origin badges || true
+        if git rev-parse --verify origin/badges >/dev/null 2>&1; then
+          git worktree add badges-wt origin/badges
+        else
+          git worktree add --detach badges-wt
+          git -C badges-wt checkout --orphan badges
+          git -C badges-wt rm -rf . >/dev/null
+        fi
+        cp badge/coverage.json badges-wt/coverage.json
+        cd badges-wt
+        git add coverage.json
+        if git diff --cached --quiet; then
+          echo "Badge unchanged"
+        else
+          git commit -m "Update coverage badge"
+          git push origin HEAD:badges
+        fi
