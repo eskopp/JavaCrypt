@@ -43,8 +43,15 @@ jobs:
         name: jacoco-report
         path: target/site/jacoco
 
-    - name: Start Tool
-      run: java -jar target/JavaCrypt.jar
+    - name: Start Tool (usage must exit with code 1)
+      run: |
+        set +e
+        java -jar target/JavaCrypt.jar
+        code=$?
+        if [ "$code" -ne 1 ]; then
+          echo "Expected exit code 1, got $code"
+          exit 1
+        fi
 
     - name: Generate Keys
       run: java -jar target/JavaCrypt.jar -genkeys priv.key pub.key

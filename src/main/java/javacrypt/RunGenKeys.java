@@ -85,14 +85,12 @@ public class RunGenKeys extends RunnableBase {
      *
      * @param key  The key to write.
      * @param file The file to write the key to.
+     * @throws IOException If the file cannot be written.
      */
-    private void writeKeyToFile(Key key, File file) {
+    private void writeKeyToFile(Key key, File file) throws IOException {
         try (FileOutputStream fos = new FileOutputStream(file);
              ObjectOutputStream oos = new ObjectOutputStream(fos)) {
             oos.writeObject(key);
-        } catch (IOException e) {
-            System.err.println("Exception(writeKeyToFile): " + e.getMessage());
-            System.exit(2);
         }
     }
 
