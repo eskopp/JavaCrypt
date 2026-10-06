@@ -1,7 +1,6 @@
 # JavaCrypt
 
 [![Test](https://github.com/eskopp/JavaCrypt/actions/workflows/test.yml/badge.svg)](https://github.com/eskopp/JavaCrypt/actions/workflows/test.yml)
-[![Coverage](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/eskopp/JavaCrypt/badges/coverage.json)](https://github.com/eskopp/JavaCrypt/actions/workflows/test.yml)
 
 A small command-line tool for RSA file encryption, decryption, key generation, and plain file copying.
 
