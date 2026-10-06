@@ -10,7 +10,6 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Random;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -68,7 +67,6 @@ class RoundtripTest {
         assertTrue(!Arrays.equals(plain, cipherText));
     }
 
-    @Disabled("Known bug: RunEncrypt encrypts the whole file in one RSA block (max 117 bytes)")
     @Test
     void largeFileSurvivesRoundtrip() throws Exception {
         byte[] plain = new byte[1000];

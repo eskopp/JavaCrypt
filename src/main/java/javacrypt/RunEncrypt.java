@@ -17,7 +17,6 @@ import java.security.PublicKey;
 import java.util.List;
 import javax.crypto.Cipher;
 import javax.crypto.NoSuchPaddingException;
-import java.nio.file.Files;
 
 /**
  * This class represents the RunEncrypt command, which performs RSA encryption using the public key.
@@ -141,27 +140,5 @@ public class RunEncrypt extends RunnableBase {
         }
 
         System.out.println("Number of bytes transferred: " + size);
-    }
-
-    /**
-     * Encrypts the input file using the public key and saves the result to the output file.
-     *
-     * @param publicKey The public key.
-     * @param inputFile The input file.
-     * @param outputFile The output file.
-     * @return The number of bytes transferred.
-     * @throws Exception If an error occurs during encryption.
-     */
-    private int encryptDecryptFile(PublicKey publicKey, File inputFile, File outputFile) throws Exception {
-        try {
-            Cipher cipher = getCipher(publicKey);
-            byte[] inputBytes = Files.readAllBytes(inputFile.toPath());
-            byte[] encryptedBytes = crypt(inputBytes, publicKey, cipher);
-            Files.write(outputFile.toPath(), encryptedBytes);
-            return encryptedBytes.length;
-        } catch (Exception e) {
-            System.err.println("Exception: " + e.getMessage());
-            throw e;
-        }
     }
 }
