@@ -4,7 +4,7 @@
 
 A small command-line tool for RSA file encryption, decryption, key generation, and plain file copying.
 
-> **Note:** [v1.0.4](https://github.com/eskopp/JavaCrypt/releases/tag/v1.0.4) (commit [`c9121e8`](https://github.com/eskopp/JavaCrypt/commit/c9121e8198add0c8276bff824c596c7627b6a32d)) is the release submitted as my Abitur exam project. Everything after that is just bugfixes and small adjustments.
+> **Note:** [v1.0.4](https://github.com/eskopp/JavaCrypt/releases/tag/v1.0.4) (commit [`33c2fdb`](https://github.com/eskopp/JavaCrypt/commit/33c2fdbe52dd2b9b42047b4319f833d8ec9aa446)) is the release submitted as my Abitur exam project. Everything after that is just bugfixes and small adjustments.
 
 ## Install Java
 
